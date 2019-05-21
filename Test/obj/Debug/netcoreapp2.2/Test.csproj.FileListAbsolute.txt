@@ -1,0 +1,14 @@
+C:\Users\guill\source\repos\PizzaBox_gt\Test\bin\Debug\netcoreapp2.2\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\guill\source\repos\PizzaBox_gt\Test\bin\Debug\netcoreapp2.2\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Users\guill\source\repos\PizzaBox_gt\Test\bin\Debug\netcoreapp2.2\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\guill\source\repos\PizzaBox_gt\Test\bin\Debug\netcoreapp2.2\Test.deps.json
+C:\Users\guill\source\repos\PizzaBox_gt\Test\bin\Debug\netcoreapp2.2\Test.runtimeconfig.json
+C:\Users\guill\source\repos\PizzaBox_gt\Test\bin\Debug\netcoreapp2.2\Test.runtimeconfig.dev.json
+C:\Users\guill\source\repos\PizzaBox_gt\Test\bin\Debug\netcoreapp2.2\Test.dll
+C:\Users\guill\source\repos\PizzaBox_gt\Test\bin\Debug\netcoreapp2.2\Test.pdb
+C:\Users\guill\source\repos\PizzaBox_gt\Test\obj\Debug\netcoreapp2.2\Test.csprojAssemblyReference.cache
+C:\Users\guill\source\repos\PizzaBox_gt\Test\obj\Debug\netcoreapp2.2\Test.csproj.CoreCompileInputs.cache
+C:\Users\guill\source\repos\PizzaBox_gt\Test\obj\Debug\netcoreapp2.2\Test.AssemblyInfoInputs.cache
+C:\Users\guill\source\repos\PizzaBox_gt\Test\obj\Debug\netcoreapp2.2\Test.AssemblyInfo.cs
+C:\Users\guill\source\repos\PizzaBox_gt\Test\obj\Debug\netcoreapp2.2\Test.dll
+C:\Users\guill\source\repos\PizzaBox_gt\Test\obj\Debug\netcoreapp2.2\Test.pdb
