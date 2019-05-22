@@ -25,14 +25,18 @@ namespace Domain
                 //Database -> Program
                 ResLocation rel = dbui.ResLocation.Where<ResLocation>(u => u.LocationId == number).FirstOrDefault<ResLocation>();
 
-                //DbInstance.Instance.ResLocation.Add();// calling insert Query
-                //DbInstance.Instance.SaveChanges();
 
-                return rel;
+                if (rel != null)
+                    return rel;
+                else
+                {
+                    Console.WriteLine("Insert a number 1-6: ");
+                    return chooseRestaurant(Console.ReadLine());
+                }
             }
             else
             {
-                Console.WriteLine("Insert a number 1 -6: ");
+                Console.WriteLine("Insert a number 1-6: ");
                 return chooseRestaurant(Console.ReadLine());
 
             }

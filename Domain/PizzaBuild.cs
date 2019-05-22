@@ -15,12 +15,15 @@ namespace Domain
         int OrderFID;
         decimal cost;
 
-        pizzadb_gtContext ctx = new pizzadb_gtContext();
         //ing0-ing4, crustFID, sizeFID, Count, OrderFID, cost
+        pizzadb_gtContext ctx = new pizzadb_gtContext();
+
 
         IndivPizza ipz = new IndivPizza();
         Ingredients ing = new Ingredients();
 
+
+        internal List<string> toppings = new List<string>();
         public void setIngredient(Ingredients x,int num)
         {
             if (num == 1)
@@ -39,55 +42,16 @@ namespace Domain
                 Environment.Exit(0);
             }
         }
-
         public Ingredients getIngredients(int number)
         {
             Ingredients ing = ctx.Ingredients.Where<Ingredients>(u => u.IngId == number).FirstOrDefault<Ingredients>();
             return ing;
         }
-
-        public Crust getCrust(int number)
-        {
-            Crust ct = ctx.Crust.Where<Crust>(u => u.CrustId == number).FirstOrDefault<Crust>();
-            return ct;
-        }
-
-
-        internal List<string> crust = new List<string>();
-
-        public void setCrust(string input)
-        {
-            crust.Add(input);
-        }
-        #region setCrust overloads
-
-        public void setCrust(string input, string input2)
-        {
-            crust.Add(input);
-            crust.Add(input2);
-        }
-        public void setCrust(string input, string input2, string input3)
-        {
-            crust.Add(input);
-            crust.Add(input2);
-            crust.Add(input3);
-        }
-        #endregion
-        public void showCrust()
-        {
-            foreach (string crust in crust) //shows existing toppings and removes chosen topping.
-            {
-                Console.WriteLine(" " + crust);
-            }
-        }
-
-
-        internal List<string> toppings = new List<string>();
         public void showTop()
         {
             foreach (string topping in toppings) //shows existing toppings and removes chosen topping.
             {
-                Console.WriteLine(" " + topping);
+                Console.WriteLine(")" + topping);
             }
         }
         public void setTop(string input)
@@ -113,53 +77,14 @@ namespace Domain
         }
 
         #endregion
-
-
-        internal List<string> size = new List<string>();
-        public Size getSize(int number)
-        {
-            Size sz = ctx.Size.Where<Size>(u => u.SizeId == number).FirstOrDefault<Size>();
-            return sz;
-        }
-        public void setSize(string input)
-        {
-            size.Add(input);
-        }
-        #region setSize overloads
-
-        public void setSize(string input, string input2)
-        {
-            size.Add(input);
-            size.Add(input2);
-        }
-        public void setSize(string input, string input2, string input3)
-        {
-            size.Add(input);
-            size.Add(input2);
-            size.Add(input3);
-        }
-        #endregion
-        public void showSize()
-        {
-            foreach (string size in size) //shows existing toppings and removes chosen topping.
-            {
-                Console.WriteLine(" " + size);
-            }
-        }
-
-        public void setCost(decimal? price)
-        {
-            ipz.Totalcost = price;
-        }
-
-        public Ingredients obtainCost(string name)
+        public Ingredients obtainTopObj(string name)
         {
             Ingredients x = ctx.Ingredients.Where<Ingredients>(u => u.Ingredient == name).FirstOrDefault<Ingredients>();
-            if (ipz == null)
+            if (x == null)
             {
                 //Count--;
                 Console.WriteLine("Fail to obtain Cost, re-enter topping name");
-                obtainCost(Console.ReadLine().ToLower());
+                obtainTopObj(Console.ReadLine().ToLower());
                 return null;
             }
             else if (x.Ingredient == name)
@@ -169,14 +94,104 @@ namespace Domain
             else
                 return null;
         }
-    }
-    //What is contained in pizza, get/set
 
-    public class PizzaOrders
-    {
-        protected List<PizzaLogic> orders;
 
-        public void addPizzaBuild(PizzaLogic pizza) //add pizza
+
+        internal List<string> crust = new List<string>();
+        public Crust getCrust(int number)
+        {
+            Crust ct = ctx.Crust.Where<Crust>(u => u.CrustId == number).FirstOrDefault<Crust>();
+            return ct;
+        }
+        public Crust getCrust(string name)
+        {
+            Crust cr = ctx.Crust.Where<Crust>(u => u.Crust1 == name).FirstOrDefault<Crust>();
+            if (cr == null)
+            {
+                //Count--;
+                Console.WriteLine("Fail to obtain Cost, re-enter crust name");
+                getCrust(Console.ReadLine().ToLower());
+                return null;
+            }
+            else if (cr.Crust1== name)
+            {
+                return cr;
+            }
+            else
+                return null;
+        }
+        public void setCrust(string input)
+        {
+            crust.Add(input);
+        }
+        public void showCrust()
+        {
+            foreach (string crust in crust) //shows existing toppings and removes chosen topping.
+            {
+                Console.WriteLine(")" + crust);
+            }
+        }
+
+
+
+
+        internal List<string> size = new List<string>();
+        public Size getSize(int number)
+        {
+            Size sz = ctx.Size.Where<Size>(u => u.SizeId == number).FirstOrDefault<Size>();
+            return sz;
+        }
+        public Size getSize(string name)
+        {
+            Size sz = ctx.Size.Where<Size>(u => u.Size1 == name).FirstOrDefault<Size>();
+            if (sz == null)
+            {
+                //Count--;
+                Console.WriteLine("Fail to obtain Cost, re-enter size name");
+                getSize(Console.ReadLine().ToLower());
+                return null;
+            }
+            else if (sz.Size1 == name)
+            {
+                return sz ;
+            }
+            else
+                return null;
+        }
+        public void setSize(string input)
+        {
+            size.Add(input);
+        }
+        public void showSize()
+        {
+            foreach (string size in size) //shows existing toppings and removes chosen topping.
+            {
+                
+                Console.WriteLine(")" + size + "| price: ");
+            }
+        }
+
+
+
+        public void setCost(decimal? price)
+        {
+            ipz.Totalcost = price;
+        }
+        public void showCost()
+        {
+            Console.WriteLine(ipz.Totalcost);
+        }
+
+
+
+
+//--------------------------------------------------------------------Input pizza orders
+        public List<IndivPizza> orders;
+        public IndivPizza passIndivPizza()
+        {
+            return ipz;
+        }
+        public void addPizzaBuild(IndivPizza pizza) //add pizza
         {
             orders.Add(pizza);
         }
@@ -184,10 +199,21 @@ namespace Domain
         {
             orders.RemoveAt(0);
         }
+        public void rmallPizzaBuild()
+        {
+            orders.Clear();
+        }
+        public IndivPizza fromPizzaBuild(int numOfOrder)
+        {
+            return orders[numOfOrder];
+        }
 
         public void sendPizzaBuild()
         {
-            //code to send pizza info/update customer/update inventory
+            //needs logic to send all pizza's saved in order not just one.
+            RestaurantLogic.DbInstance.Instance.IndivPizza.Add(fromPizzaBuild(0));
+            RestaurantLogic.DbInstance.Instance.SaveChanges();
         }
-    } //list of PizzaBuild
+    }
+
 }

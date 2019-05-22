@@ -83,7 +83,7 @@ namespace Domain
            // Console.WriteLine(input);
             if (input.Equals("r"))
             {
-                //regUser();
+                
                 Console.WriteLine("Create Username: ");
                 setUName(Console.ReadLine()); //upload username to database ... still needs function created
 
@@ -124,16 +124,16 @@ namespace Domain
 
                 input = Console.ReadLine();
 
-                ui = initializeInfo(input);
-                if (ui == null)
+                //ui = initializeInfo(input);
+                if (initializeInfo(input) == null)
                 {
-                    Console.WriteLine("user not in database");
+                    Console.WriteLine("Username not in database");
                     Console.WriteLine("S: sign in | R: register");
                     SignOrRegister(Console.ReadLine().ToLower());
                 }
-                else if (ui.UserName == input)
+                else if (initializeInfo(input).UserName == input)
                 {
-                    //setUName(input);
+                    ui = initializeInfo(input);
                     Console.WriteLine("User matched");
                     Console.WriteLine("Insert password: ");
                     checkPW(Console.ReadLine(), ui.Password);// check if password matches database/username if y:continue, if n:prompt user for password again //forgot password
