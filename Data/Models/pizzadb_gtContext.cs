@@ -18,6 +18,7 @@ namespace Data.Models
         public virtual DbSet<Crust> Crust { get; set; }
         public virtual DbSet<IndivPizza> IndivPizza { get; set; }
         public virtual DbSet<Ingredients> Ingredients { get; set; }
+        public virtual DbSet<Inventory> Inventory { get; set; }
         public virtual DbSet<Orderpizza> Orderpizza { get; set; }
         public virtual DbSet<ResLocation> ResLocation { get; set; }
         public virtual DbSet<Size> Size { get; set; }
@@ -96,6 +97,28 @@ namespace Data.Models
                     .HasColumnName("ingredient")
                     .HasMaxLength(16)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Inventory>(entity =>
+            {
+                entity.HasKey(e => e.Invid)
+                    .HasName("PK__inventor__103551681D260473");
+
+                entity.ToTable("inventory");
+
+                entity.Property(e => e.Invid)
+                    .HasColumnName("invid")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Cost)
+                    .HasColumnName("cost")
+                    .HasColumnType("decimal(5, 2)");
+
+                entity.Property(e => e.FkIngredient).HasColumnName("FK_ingredient");
+
+                entity.Property(e => e.Resfid).HasColumnName("resfid");
+
+                entity.Property(e => e.Stock).HasColumnName("stock");
             });
 
             modelBuilder.Entity<Orderpizza>(entity =>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Data.Models;
 using Domain;
 
@@ -10,48 +11,34 @@ namespace Client
         public static void Main(string[] args)
         {
 
-            string input;
-            int countTop = 0;
-            decimal? currentcost = 0;
+            string          input;
+            int             countTop = 0;
+            decimal?        currentcost = 0;
 
-            //front-end:user
-            User uu = new User();
-
-            //front-end:location
-            ResLocation res = new ResLocation();
-
-            //front-end:user
-            PizzaLogic user_pizza = new PizzaLogic();
-
-            //holds database info
+            User            uu = new User();
+            ResLocation     res = new ResLocation();
             RestaurantLogic rl = new RestaurantLogic();
-            PizzaLogic pl = new PizzaLogic();
+            PizzaLogic      pl = new PizzaLogic();
+            IndivPizza      pizzaorder = new IndivPizza();
+            Ingredients     ingredient = new Ingredients();
+            Size            size = new Size();
+            Crust           crust = new Crust();
+            Inventory       invent = new Inventory();
 
-            IndivPizza pizzaorder = new IndivPizza();
 
 
-            Ingredients ingredient = new Ingredients();
-            Size size = new Size();
-            Crust crust = new Crust();
-            int i = 1;
-            while (pl.getIngredients(i) != null)
-            {
-                ingredient = pl.getIngredients(i);
-                pl.setTop(ingredient.Ingredient);
-                i++;
-            }
             int j = 1;
             while (pl.getSize(j) != null)
             {
                 size = pl.getSize(j);
-                pl.setSize(size.Size1);
+                pl.setshowSize(size.Size1);
                 j++;
             }
             int k = 1;
             while (pl.getCrust(k) != null)
             {
                 crust = pl.getCrust(k);
-                pl.setCrust(crust.Crust1);
+                pl.setshowCrust(crust.Crust1);
                 k++;
             }
 
@@ -61,19 +48,19 @@ namespace Client
 
             void userInput(){
 
+
                 Console.WriteLine("Sign in: S | Register: R");  //sign in/register
-
-                uu.SignOrRegister(Console.ReadLine().ToLower());
-
+                input = Console.ReadLine().ToLower();
+                uu.SignOrRegister(input);
+                pl.setusername(uu.getUName());
 
                 Console.WriteLine("Choose Restaurant: ");
-                Console.WriteLine("1) Dominos, CA \n2) PizzaHut, CA \n3) Gaspare's,CA \n4) Nizarrio's, LA" +
-                    "\n5) Dominos, RE \n6) PizzaHut, RE");
-
-                //holds locationid,state,city,zipcode,resname
-                //use locationid as foreign key to call other tables
-
-                res = rl.chooseRestaurant(Console.ReadLine());
+                rl.showLocation();
+                res=rl.chooseRestaurant(Console.ReadLine());
+                pl.setlocationFID(res.LocationId);
+                pl.setThisInventory();
+                pl.setThisIngredientsList();
+                pl.setThisIngredientsString();
 
                 Console.WriteLine("\t\tChosen: " + res.ResName);
 
@@ -83,16 +70,23 @@ namespace Client
             }
             void choices()
             {
-                Console.WriteLine("$5.99 Medium Pepperoni with bacon pizza: one");
-                Console.WriteLine("$5.99 Medium Pineapple with ham: two");
+                
+                Console.WriteLine($"$5.99 Medium {pl.ingredient[0]} with {pl.ingredient[1]} pizza: one");
+                Console.WriteLine($"$5.99 Medium {pl.ingredient[2]} with {pl.ingredient[3]}: two");
                 Console.WriteLine("Customize order: custom");
 
                 input = Console.ReadLine().ToLower();
                 customize();
 
                 Console.WriteLine($"price of current pizza:");
-                user_pizza.showCost();
-
+                pl.showCost();
+                Console.WriteLine("How many of this pizza:");
+                input = Console.ReadLine();
+                int a = pl.sendCountToQ(input);
+                currentcost = currentcost * a; //need to change so it only multiplies CURRENT pizza,not whole order
+                //logic would be only updating FULLcost at end, and CURRENT cost until then.
+                pl.setCost(currentcost);
+                pl.showCost();
                 Console.WriteLine("Add another pizza?");
                 Console.WriteLine("y: yes || n:no");
                 input = Console.ReadLine().ToLower();
@@ -103,65 +97,61 @@ namespace Client
                 if (input.Equals("custom")) //create case statements to verify input ... later finish implementation first.
                 {
                     Console.WriteLine("\t\t What size pizza?");
-                    pl.showSize();
+                    pl.showSize();                          //ought to show price as well
                     input = Console.ReadLine().ToLower();
-                    user_pizza.setSize(input);
-                    currentcost = user_pizza.getSize(input).Totalcost + currentcost;
+                    pl.setSize(input);
+                    currentcost = pl.getSize(input).Totalcost + currentcost;
 
                     Console.WriteLine("\t\t Which crust would you like?");
                     pl.showCrust();
                     input = Console.ReadLine().ToLower();
-                    user_pizza.setCrust(input);
-                    currentcost = user_pizza.getCrust(input).Totalcost + currentcost;
+                    pl.setCrust(input);
+                    currentcost = pl.getCrust(input).Totalcost + currentcost;
 
                     Console.WriteLine("\t\t What topping would you like?");
                     pl.showTop();
                     input = Console.ReadLine().ToLower();
-                    user_pizza.setTop(input);
-                    currentcost = user_pizza.obtainTopObj(input).Cost + currentcost;
-
-                    pl.rmTop(input);
+                    ingredient = pl.returnsIngredientsObj(input);
+                    pl.setUserTop(input,countTop);
+                    currentcost = ingredient.Cost + currentcost;
                     countTop++;
 
                     Console.WriteLine("\t\tAdd another topping?");
                     input = Console.ReadLine().ToLower();
                     toppingChooser();
 
-                } //yes continues to options
+                } 
                 else if (input.Equals("one"))
                 {
-                    user_pizza.setSize("medium");
+                    
+                    pl.setSize("medium");
 
-                    user_pizza.setCrust("regular");
+                    pl.setCrust("regular");
 
-                    user_pizza.setTop("pepperoni", "bacon");
-
-                    pl.setIngredient(ingredient, 1);
-
-                    pl.setIngredient(ingredient, 2);
+                    pl.setUserTop(pl.ingredient[0], countTop);
+                    countTop++;
+                    pl.setUserTop(pl.ingredient[1], countTop);
+                    countTop++;
 
                     currentcost = 5.99M + currentcost;
-                    user_pizza.setCost(currentcost);
+                    pl.setCost(currentcost);
                     Console.WriteLine("\t\tContinuing to Cart");
                     //checkcustomize();
 
                 } //No maintains default-> cart
                 else if (input.Equals("two"))
                 {
-                    user_pizza.setSize("medium");
+                    pl.setSize("medium");
 
-                    user_pizza.setCrust("regular");
+                    pl.setCrust("regular");
 
-                    user_pizza.setTop("pineapple");
-                    user_pizza.setTop("ham");
-                    ingredient = user_pizza.obtainTopObj ("pineapple");
-                    pl.setIngredient(ingredient, 1);
-
-                    ingredient = user_pizza.obtainTopObj("ham");
-                    pl.setIngredient(ingredient, 2);
+                    pl.setUserTop(pl.ingredient[2],countTop);
+                    countTop++;
+                    pl.setUserTop(pl.ingredient[3], countTop);
+                    countTop++;
 
                     currentcost = 5.99M + currentcost;
-                    user_pizza.setCost(currentcost);
+                    pl.setCost(currentcost);
                     Console.WriteLine("\t\tContinuing to Cart");
 
                    // checkcustomize();
@@ -181,17 +171,27 @@ namespace Client
                 {
                     //is supposed to input order into one LIST of orders
                     // and upload orders once done.... currently obj exception error
-                  pizzaorder = user_pizza.passIndivPizza();
-                   // user_pizza.addPizzaBuild(pizzaorder); ----
-                  
+                    //count already sent
+                    pl.sendIngredientstoQ(); //ing0-4
+                    pl.sendSizetoQ();//sizefid
+                    pl.sendCrusttoQ();//crustfid
+                    pl.setOrderID();
+                    pl.sendOrderFIDtoQ(); //orderfid
 
-                    //input = "custom"; //hardcode to get customize to run proper
+                    //crustfid,sizefid,count,orderfid,cost
+                    pizzaorder = pl.passIndivPizza();
+                    pl.addPizzaBuild(pizzaorder);
+                    countTop = 0;
+                    //reset ingredient/crust/size for show
+
                     choices();
                 }
                 else if (input == "no" || input == "n")
                 {
                     Console.WriteLine("price of current order:");
-                    user_pizza.showCost();
+                    pl.showCost();
+                    //show current order as well... requires order object
+                    
                     Console.WriteLine("send order? y:yes | n: no to cancel order");
                     input = Console.ReadLine().ToLower();
                     sendorcancel();
@@ -199,12 +199,29 @@ namespace Client
                         if (input == "y")
                         {
                             Console.WriteLine("order sent");
+                            pl.sendIngredientstoQ(); //ing0-4
+                            pl.sendSizetoQ();//sizefid
+                            pl.sendCrusttoQ();//crustfid
+                            pl.setOrderID();
+                            pl.sendOrderFIDtoQ(); //orderfid
+
+                            //crustfid,sizefid,count,orderfid,cost
+                            pizzaorder = pl.passIndivPizza();
+                            pl.addPizzaBuild(pizzaorder);
+                            countTop = 0;
+
+                            pl.setCost(currentcost);
+                            pl.sendPizzaBuild();
+                            //pl.commitToDb();
+                            pl.resetIngID();
+                            userInput();
                             //command to upload info to database;
                         }
                         else if (input == "n")
                         {
                             Console.WriteLine("cancelling order");
-                            pl.rmallPizzaBuild();
+                            if(pl.passIndivPizza().Count != null)
+                                pl.rmallPizzaBuild();
                             countTop = 0;
                             currentcost = 0;
                             userInput();
@@ -231,18 +248,17 @@ namespace Client
                     Console.WriteLine("\t\tWhat topping would you like to add?");
 
                     pl.showTop();
-
-                    input = Console.ReadLine().ToLower(); //should check for topping if allowed
-                    user_pizza.setTop(input);
-                    currentcost = user_pizza.obtainTopObj(input).Cost + currentcost;
-                    user_pizza.setCost(currentcost);
-                    pl.rmTop(input);
+                    input = Console.ReadLine().ToLower();
+                    ingredient = pl.returnsIngredientsObj(input);
+                    pl.setUserTop(input, countTop);
+                    currentcost = ingredient.Cost + currentcost;
                     countTop++;
                     addTopping();
                 }
                 else if (input.Equals("n") || input.Equals("no"))   
                 {// if y is n, continue;
                     Console.WriteLine("n topping chosen: continuing to cart");
+                    pl.setCost(currentcost);
                 }
                 else
                 {
@@ -260,21 +276,22 @@ namespace Client
                     input = Console.ReadLine().ToLower();
                 }
 
-                if((input.Equals("yes") || input.Equals("y")))
+                if ((input.Equals("yes") || input.Equals("y")))
                 {
                     toppingChooser();
                 }
-                else if(countTop >= 5)
+                else if (countTop >= 5)
                 {
                     Console.WriteLine("continuing to cart");
                 }
-                else if(input.Equals("no") || input.Equals("n"))
+                else if (input.Equals("no") || input.Equals("n"))
                 {
                     Console.WriteLine("continuing to cart");
+                    pl.setCost(currentcost);
                 }
                 else
                 {
-                    Console.WriteLine("Please insert y for yes, n for no");                    
+                    Console.WriteLine("Please insert y for yes, n for no");
                     addTopping();
 
                 }
