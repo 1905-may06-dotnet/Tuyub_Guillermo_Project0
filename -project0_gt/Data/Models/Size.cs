@@ -7,5 +7,6 @@ namespace Data.Models
     {
         public int SizeId { get; set; }
         public string Size1 { get; set; }
+        public decimal? Totalcost { get; set; }
     }
 }

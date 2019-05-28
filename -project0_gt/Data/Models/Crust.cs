@@ -7,5 +7,6 @@ namespace Data.Models
     {
         public int CrustId { get; set; }
         public string Crust1 { get; set; }
+        public decimal? Totalcost { get; set; }
     }
 }

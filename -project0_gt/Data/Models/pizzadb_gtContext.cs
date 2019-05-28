@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System.IO;
 
 namespace Data.Models
 {
@@ -19,21 +18,20 @@ namespace Data.Models
         public virtual DbSet<Crust> Crust { get; set; }
         public virtual DbSet<IndivPizza> IndivPizza { get; set; }
         public virtual DbSet<Ingredients> Ingredients { get; set; }
+        public virtual DbSet<Inventory> Inventory { get; set; }
         public virtual DbSet<Orderpizza> Orderpizza { get; set; }
         public virtual DbSet<ResLocation> ResLocation { get; set; }
         public virtual DbSet<Size> Size { get; set; }
         public virtual DbSet<UserInfo> UserInfo { get; set; }
 
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer($"Server=gt-dbserver.database.windows.net;Database=pizzadb_gt;user id=guillermoT;Password={Environment.GetEnvironmentVariable("pass")};");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Server=gt-dbserver.database.windows.net;Database=pizzadb_gt;user id=guillermoT;Password=Kratos0909!;");
             }
         }
-
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,6 +46,10 @@ namespace Data.Models
                     .HasColumnName("Crust")
                     .HasMaxLength(16)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Totalcost)
+                    .HasColumnName("totalcost")
+                    .HasColumnType("decimal(5, 2)");
             });
 
             modelBuilder.Entity<IndivPizza>(entity =>
@@ -97,6 +99,28 @@ namespace Data.Models
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<Inventory>(entity =>
+            {
+                entity.HasKey(e => e.Invid)
+                    .HasName("PK__inventor__103551681D260473");
+
+                entity.ToTable("inventory");
+
+                entity.Property(e => e.Invid)
+                    .HasColumnName("invid")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Cost)
+                    .HasColumnName("cost")
+                    .HasColumnType("decimal(5, 2)");
+
+                entity.Property(e => e.FkIngredient).HasColumnName("FK_ingredient");
+
+                entity.Property(e => e.Resfid).HasColumnName("resfid");
+
+                entity.Property(e => e.Stock).HasColumnName("stock");
+            });
+
             modelBuilder.Entity<Orderpizza>(entity =>
             {
                 entity.HasKey(e => e.OrderId)
@@ -143,6 +167,10 @@ namespace Data.Models
                     .HasColumnName("Size")
                     .HasMaxLength(8)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Totalcost)
+                    .HasColumnName("totalcost")
+                    .HasColumnType("decimal(5, 2)");
             });
 
             modelBuilder.Entity<UserInfo>(entity =>
